@@ -1,0 +1,8 @@
+{
+  "complete_snapshot": true,
+  "csv_file": "day1.csv",
+  "expected_row_count": 1000,
+  "schema_version": "1",
+  "sha256": "cb126503af3b79cd09188a09e593ad75aafd0b3b08b9743acf44199aec2aaf3c",
+  "snapshot_date": "2026-10-01"
+}
