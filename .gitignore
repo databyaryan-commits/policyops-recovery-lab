@@ -1,0 +1,30 @@
+
+# Project-specific Python environment
+.venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Testing and coverage reports
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Python build files
+*.egg-info/
+build/
+dist/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+
+# Mac and editor-specific files
+.DS_Store
+.vscode/
+
+# Generated outputs (small demo fixtures will be tracked)
+data/generated/
+artifacts/generated/
