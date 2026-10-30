@@ -225,20 +225,20 @@ For snapshots held for review, the system provides separate approval and promoti
 
 ```bash
 python -m policyops.approve \
-  --run-id <RUN_ID> \
+  --run-id YOUR_RUN_UUID \
   --reviewer "Demo Reviewer" \
   --reason "Reviewed the synthetic deletion candidates"
 
-python -m policyops.promote --run-id <RUN_ID>
+python -m policyops.promote --run-id YOUR_RUN_UUID
 ```
 
-Replace `<RUN_ID>` with the run identifier printed by the ingestion command. These steps should be used only after the proposed deletions have been reviewed.
+Replace `YOUR_RUN_UUID` with the run identifier printed by the ingestion command. These steps should be used only after the proposed deletions have been reviewed.
 
 For an existing run, generate a report with:
 
 ```bash
 python -m policyops.report \
-  --run-id <RUN_ID> \
+  --run-id YOUR_RUN_UUID \
   --format markdown
 ```
 
