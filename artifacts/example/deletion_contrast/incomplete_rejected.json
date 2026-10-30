@@ -1,0 +1,66 @@
+{
+  "approval": {
+    "approval_reason": null,
+    "approved_at": null,
+    "approved_by": null
+  },
+  "audit_history": {
+    "deleted": 0,
+    "inserted": 0,
+    "total": 0,
+    "updated": 0
+  },
+  "decision": "Snapshot rejected during validation. Business changes were not promoted.",
+  "limitations": [
+    "Source integrity checks establish consistency with the supplied manifest, not the business reason for missing policies.",
+    "Recorded change counts describe the assessment made for this run. They are not necessarily committed changes.",
+    "Audit history counts describe changes recorded for this run, not the entire current database."
+  ],
+  "processing": {
+    "failure_reason": "2 validation check(s) failed",
+    "finished_at": "2026-10-30T18:19:21.613780+11:00",
+    "started_at": "2026-10-30T18:19:21.613780+11:00",
+    "status": "rejected"
+  },
+  "quality_events": [
+    {
+      "check_id": "CHECKSUM_MISMATCH",
+      "created_at": "2026-10-30T18:19:21.613780+11:00",
+      "event_id": 1,
+      "evidence": {
+        "manifest": "incomplete_drop.json"
+      },
+      "expected_rule": "The CSV checksum must match the manifest.",
+      "observed_value": "12e23166ad3881e7269db7dbb6a96f99ea05331a1a23b2c013fed83bacb801c6",
+      "severity": "error"
+    },
+    {
+      "check_id": "ROW_COUNT_MISMATCH",
+      "created_at": "2026-10-30T18:19:21.613780+11:00",
+      "event_id": 2,
+      "evidence": {
+        "manifest": "incomplete_drop.json"
+      },
+      "expected_rule": "The manifest declares 1000 rows.",
+      "observed_value": "650",
+      "severity": "error"
+    }
+  ],
+  "recorded_changes": {
+    "changed": null,
+    "deleted": null,
+    "new": null,
+    "unchanged": null
+  },
+  "run_id": "4b5b0189-ec3c-4a3d-965d-6db806fa6c27",
+  "source": {
+    "accepted_count": 650,
+    "checksum_sha256": "cb126503af3b79cd09188a09e593ad75aafd0b3b08b9743acf44199aec2aaf3c",
+    "complete_snapshot": true,
+    "expected_row_count": 1000,
+    "schema_version": "1",
+    "snapshot_date": "2026-10-02",
+    "source_count": 650,
+    "source_file": "incomplete_drop.csv"
+  }
+}

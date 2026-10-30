@@ -1,0 +1,43 @@
+{
+  "approval": {
+    "approval_reason": null,
+    "approved_at": null,
+    "approved_by": null
+  },
+  "audit_history": {
+    "deleted": 0,
+    "inserted": 1000,
+    "total": 1000,
+    "updated": 0
+  },
+  "decision": "Snapshot committed. Business changes and audit events were written by the promotion process.",
+  "limitations": [
+    "Source integrity checks establish consistency with the supplied manifest, not the business reason for missing policies.",
+    "Recorded change counts describe the assessment made for this run. They are not necessarily committed changes.",
+    "Audit history counts describe changes recorded for this run, not the entire current database."
+  ],
+  "processing": {
+    "failure_reason": null,
+    "finished_at": "2026-10-30T18:19:21.613780+11:00",
+    "started_at": "2026-10-30T18:19:21.613780+11:00",
+    "status": "committed"
+  },
+  "quality_events": [],
+  "recorded_changes": {
+    "changed": 0,
+    "deleted": 0,
+    "new": 1000,
+    "unchanged": 0
+  },
+  "run_id": "df94ea00-dfc9-415b-af9c-bb2b7cb72fdb",
+  "source": {
+    "accepted_count": 1000,
+    "checksum_sha256": "cb126503af3b79cd09188a09e593ad75aafd0b3b08b9743acf44199aec2aaf3c",
+    "complete_snapshot": true,
+    "expected_row_count": 1000,
+    "schema_version": "1",
+    "snapshot_date": "2026-10-01",
+    "source_count": 1000,
+    "source_file": "day1.csv"
+  }
+}

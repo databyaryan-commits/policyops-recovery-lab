@@ -1,0 +1,58 @@
+{
+  "approval": {
+    "approval_reason": null,
+    "approved_at": null,
+    "approved_by": null
+  },
+  "audit_history": {
+    "deleted": 0,
+    "inserted": 0,
+    "total": 0,
+    "updated": 0
+  },
+  "decision": "Snapshot held for manual review. Business changes have not been promoted.",
+  "limitations": [
+    "Source integrity checks establish consistency with the supplied manifest, not the business reason for missing policies.",
+    "Recorded change counts describe the assessment made for this run. They are not necessarily committed changes.",
+    "Audit history counts describe changes recorded for this run, not the entire current database."
+  ],
+  "processing": {
+    "failure_reason": null,
+    "finished_at": null,
+    "started_at": "2026-10-30T18:19:21.613780+11:00",
+    "status": "awaiting_review"
+  },
+  "quality_events": [
+    {
+      "check_id": "DELETION_RATE_REVIEW_REQUIRED",
+      "created_at": "2026-10-30T18:19:21.613780+11:00",
+      "event_id": 3,
+      "evidence": {
+        "active_before": 1000,
+        "deleted_count": 350,
+        "deletion_rate": "0.35",
+        "threshold": "0.20"
+      },
+      "expected_rule": "Deletion rates above 20% require manual approval.",
+      "observed_value": "35.00%",
+      "severity": "warning"
+    }
+  ],
+  "recorded_changes": {
+    "changed": 0,
+    "deleted": 350,
+    "new": 0,
+    "unchanged": 650
+  },
+  "run_id": "6e262800-ad21-471e-8a08-ac9dd9efb8fe",
+  "source": {
+    "accepted_count": 650,
+    "checksum_sha256": "12e23166ad3881e7269db7dbb6a96f99ea05331a1a23b2c013fed83bacb801c6",
+    "complete_snapshot": true,
+    "expected_row_count": 650,
+    "schema_version": "1",
+    "snapshot_date": "2026-10-02",
+    "source_count": 650,
+    "source_file": "valid_drop.csv"
+  }
+}
