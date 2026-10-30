@@ -12,6 +12,7 @@ import psycopg
 
 from policyops.changes import ChangeCounts
 from policyops.db import get_connection
+from policyops.failure import record_failed_attempt
 from policyops.load import read_manifest_details, stage_snapshot
 from policyops.promote import promote_snapshot
 from policyops.replay import check_snapshot_identity
@@ -184,6 +185,38 @@ def ingest_snapshot(
         )
 
 
+def record_failure_after_rollback(
+    manifest_path: Path,
+    error: Exception,
+) -> None:
+    """Persist processing failure evidence using a fresh transaction."""
+
+    reason = f"{type(error).__name__}: {error}"
+
+    try:
+        # This opens only after the original ingestion
+        # connection has exited and rolled back.
+        with get_connection() as failure_connection:
+            failed_run_id = record_failed_attempt(
+                failure_connection,
+                manifest_path,
+                reason,
+                stage="ingestion",
+            )
+
+    except (psycopg.Error, ValueError) as recording_error:
+        # A database outage may also prevent recording.
+        # Never describe an incident as saved unless its
+        # separate transaction committed successfully.
+        print(
+            "Failure evidence could not be saved "
+            f"({type(recording_error).__name__})."
+        )
+
+    else:
+        print(f"Failure recorded as run {failed_run_id}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
@@ -210,13 +243,20 @@ def main() -> int:
 
     except ValueError as error:
         print(f"Ingestion blocked: {error}")
+        record_failure_after_rollback(args.manifest, error)
         return 1
 
-    except psycopg.Error:
+    except psycopg.Error as error:
         print(
             "Database ingestion failed. "
-            "The transaction was rolled back."
+            "The transaction was not committed."
         )
+        record_failure_after_rollback(args.manifest, error)
+        return 1
+
+    except RuntimeError as error:
+        print(f"Ingestion processing failed: {error}")
+        record_failure_after_rollback(args.manifest, error)
         return 1
 
     if result.outcome == "replayed":
