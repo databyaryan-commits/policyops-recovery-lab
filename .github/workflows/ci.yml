@@ -1,0 +1,137 @@
+
+name: PolicyOps CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }} / PostgreSQL 17
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.11"
+          - "3.14"
+
+    # Each test job gets its own clean PostgreSQL database.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: policyops
+          POSTGRES_PASSWORD: policyops_ci
+          POSTGRES_DB: policyops_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U policyops -d policyops_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # These credentials are only for the disposable CI database.
+    env:
+      POLICYOPS_TEST_DATABASE_URL: postgresql://policyops:policyops_ci@127.0.0.1:5432/policyops_test
+      POLICYOPS_DATABASE_URL: postgresql://policyops:policyops_ci@127.0.0.1:5432/policyops_test
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install project and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Initialize PostgreSQL test schema
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          import psycopg
+
+          database_url = os.environ["POLICYOPS_TEST_DATABASE_URL"]
+
+          with psycopg.connect(
+              database_url,
+              autocommit=True,
+          ) as connection:
+              schema_sql = Path("sql/schema.sql").read_text(
+                  encoding="utf-8"
+              )
+
+              connection.execute(schema_sql)
+
+              table_count = connection.execute(
+                  """
+                  SELECT COUNT(*)
+                  FROM information_schema.tables
+                  WHERE table_schema = 'public'
+                    AND table_type = 'BASE TABLE'
+                  """
+              ).fetchone()[0]
+
+              assert table_count == 5, (
+                  f"Expected 5 PolicyOps tables, found {table_count}"
+              )
+
+              print("PostgreSQL schema initialized: 5 tables")
+          PY
+
+      - name: Run automated tests
+        run: python -m pytest -q
+
+      - name: Verify database cleanup
+        run: |
+          python - <<'PY'
+          import os
+
+          import psycopg
+
+          database_url = os.environ["POLICYOPS_TEST_DATABASE_URL"]
+
+          with psycopg.connect(database_url) as connection:
+              counts = connection.execute(
+                  """
+                  SELECT
+                      (SELECT COUNT(*) FROM public.ingestion_runs),
+                      (SELECT COUNT(*) FROM public.policy_staging),
+                      (SELECT COUNT(*) FROM public.policy_current),
+                      (SELECT COUNT(*) FROM public.policy_history),
+                      (SELECT COUNT(*) FROM public.quality_events),
+                      (
+                          SELECT COUNT(*)
+                          FROM pg_namespace
+                          WHERE nspname ~
+                              '^policyops_(concurrent|cli|demo|failure|recovery)_'
+                      )
+                  """
+              ).fetchone()
+
+          assert counts == (0, 0, 0, 0, 0, 0), (
+              f"Test database cleanup failed: {counts}"
+          )
+
+          print("Database cleanup verified: all counts are zero")
+          PY
