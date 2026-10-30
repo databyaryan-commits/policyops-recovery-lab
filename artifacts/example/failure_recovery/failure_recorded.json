@@ -1,0 +1,56 @@
+{
+  "approval": {
+    "approval_reason": null,
+    "approved_at": null,
+    "approved_by": null
+  },
+  "audit_history": {
+    "deleted": 0,
+    "inserted": 0,
+    "total": 0,
+    "updated": 0
+  },
+  "decision": "A processing failure was recorded. Inspect the failure reason and quality events.",
+  "limitations": [
+    "Source integrity checks establish consistency with the supplied manifest, not the business reason for missing policies.",
+    "Recorded change counts describe the assessment made for this run. They are not necessarily committed changes.",
+    "Audit history counts describe changes recorded for this run, not the entire current database."
+  ],
+  "processing": {
+    "failure_reason": "RuntimeError: Simulated failure after audit-history write",
+    "finished_at": "2026-10-30T18:55:32.094469+11:00",
+    "started_at": "2026-10-30T18:55:32.094469+11:00",
+    "status": "failed"
+  },
+  "quality_events": [
+    {
+      "check_id": "PROCESSING_TRANSACTION_FAILED",
+      "created_at": "2026-10-30T18:55:32.094469+11:00",
+      "event_id": 1,
+      "evidence": {
+        "manifest": "day2.json",
+        "stage": "ingestion"
+      },
+      "expected_rule": "Failed processing must not leave partial business changes or audit history.",
+      "observed_value": "RuntimeError: Simulated failure after audit-history write",
+      "severity": "error"
+    }
+  ],
+  "recorded_changes": {
+    "changed": null,
+    "deleted": null,
+    "new": null,
+    "unchanged": null
+  },
+  "run_id": "6f9cfd89-1248-44ac-8840-8894cd7ac0d6",
+  "source": {
+    "accepted_count": null,
+    "checksum_sha256": "18c9a3df95e9ba73735e4516bb0a531b4ea654d54c6168f5daba2e5d76e7c09a",
+    "complete_snapshot": true,
+    "expected_row_count": 1010,
+    "schema_version": "1",
+    "snapshot_date": "2026-10-02",
+    "source_count": null,
+    "source_file": "day2.csv"
+  }
+}
